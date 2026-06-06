@@ -288,3 +288,14 @@ def logout(
     db.commit()
 
     return {"detail": "Successfully logged out"}
+
+
+@router.get(
+    "/verify",
+    status_code=status.HTTP_200_OK,
+    summary="Verify a vendor account using verification token",
+    description="Processes the registration token, updates vendor status to active, and enables user login.",
+)
+def verify_vendor(token: str, db: Session = Depends(get_db)):
+    return AuthService.verify_vendor_account(db, token)
+

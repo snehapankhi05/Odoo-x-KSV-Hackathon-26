@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.auth import router as auth_router
+from app.api.users import router as users_router
+from app.api.vendors import router as vendors_router
 
 # FastAPI App Definition
 app = FastAPI(
@@ -24,5 +26,7 @@ app.add_middleware(
 def health_check():
     return {"status": "healthy", "service": "vendorbridge-erp-backend"}
 
-# Register Router
+# Register Routers
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["Authentication"])
+app.include_router(users_router, prefix="/api/v1/users", tags=["Users Management"])
+app.include_router(vendors_router, prefix="/api/v1/vendors", tags=["Vendors Management"])
