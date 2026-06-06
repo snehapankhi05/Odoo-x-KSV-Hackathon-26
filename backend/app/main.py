@@ -15,6 +15,7 @@ from app.api.users import router as users_router
 from app.api.vendors import router as vendors_router
 from app.api.rfqs import router as rfqs_router
 from app.api.quotations import router as quotations_router
+from app.api.comparison import router as comparison_router
 from app.core.database import engine
 from app.models import Base
 import app.models
@@ -61,3 +62,4 @@ app.include_router(users_router, prefix="/api/v1/users", tags=["Users Management
 app.include_router(vendors_router, prefix="/api/v1/vendors", tags=["Vendors Management"])
 app.include_router(rfqs_router, prefix="/api/v1/rfqs", tags=["RFQ Sourcing"])
 app.include_router(quotations_router, prefix="/api/v1/quotations", tags=["Quotations Management"])
+app.include_router(comparison_router, prefix="/api/v1/comparison", tags=["Quotation Comparison"])
