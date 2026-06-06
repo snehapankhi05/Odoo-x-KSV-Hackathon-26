@@ -4,6 +4,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.auth import router as auth_router
 from app.api.users import router as users_router
 from app.api.vendors import router as vendors_router
+from app.core.database import engine
+from app.models import Base
+import app.models
+
+# Automatically create all tables on application startup
+Base.metadata.create_all(bind=engine)
 
 # FastAPI App Definition
 app = FastAPI(
