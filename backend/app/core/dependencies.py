@@ -1,3 +1,4 @@
+import uuid
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
@@ -37,11 +38,14 @@ def get_current_user(
 
         if user_id_str is None or token_type != "access":
             raise credentials_exception
-    except JWTError:
+        
+        # Safe UUID type conversion
+        user_uuid = uuid.UUID(user_id_str)
+    except (JWTError, ValueError):
         raise credentials_exception
 
     # Query the user record
-    user = db.query(User).filter(User.user_id == user_id_str, User.deleted_at.is_(None)).first()
+    user = db.query(User).filter(User.user_id == user_uuid, User.deleted_at.is_(None)).first()
     if user is None:
         raise credentials_exception
 
