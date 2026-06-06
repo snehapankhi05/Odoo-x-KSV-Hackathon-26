@@ -24,7 +24,9 @@ def get_current_user(
         headers={"WWW-Authenticate": "Bearer"},
     )
 
-    if not token:
+    token_str = token.credentials if token else None
+
+    if not token_str:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Authentication credentials were not provided",
@@ -32,7 +34,7 @@ def get_current_user(
         )
 
     try:
-        payload = decode_token(token)
+        payload = decode_token(token_str)
         user_id_str: str = payload.get("user_id")
         token_type: str = payload.get("type")
 

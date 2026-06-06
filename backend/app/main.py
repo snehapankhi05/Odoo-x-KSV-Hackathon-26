@@ -13,12 +13,21 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.auth import router as auth_router
 from app.api.users import router as users_router
 from app.api.vendors import router as vendors_router
+from app.api.rfqs import router as rfqs_router
+from app.api.quotations import router as quotations_router
 from app.core.database import engine
 from app.models import Base
 import app.models
 
 # Automatically create all tables on application startup
 Base.metadata.create_all(bind=engine)
+
+# Run column migrations for newly added Quotation fields
+from sqlalchemy import text
+with engine.connect() as conn:
+    conn.execute(text("ALTER TABLE quotations ADD COLUMN IF NOT EXISTS delivery_timeline VARCHAR(100);"))
+    conn.execute(text("ALTER TABLE quotations ADD COLUMN IF NOT EXISTS notes TEXT;"))
+    conn.commit()
 
 # FastAPI App Definition
 app = FastAPI(
@@ -50,3 +59,5 @@ def health_check():
 app.include_router(auth_router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(users_router, prefix="/api/v1/users", tags=["Users Management"])
 app.include_router(vendors_router, prefix="/api/v1/vendors", tags=["Vendors Management"])
+app.include_router(rfqs_router, prefix="/api/v1/rfqs", tags=["RFQ Sourcing"])
+app.include_router(quotations_router, prefix="/api/v1/quotations", tags=["Quotations Management"])

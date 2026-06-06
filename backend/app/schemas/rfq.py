@@ -50,7 +50,16 @@ class RFQVendorResponse(RFQVendorBase):
 
 # ── RFQ SCHEMAS ────────────────────────────────────────────────────────
 class RFQBase(BaseModel):
-    status: Literal["draft", "open", "closed", "cancelled"] = "draft"
+    status: Literal[
+        "draft",
+        "published",
+        "quotation_open",
+        "quotation_closed",
+        "under_review",
+        "approved",
+        "cancelled",
+        "completed",
+    ] = "draft"
     deadline: datetime
 
 
@@ -60,7 +69,18 @@ class RFQCreate(RFQBase):
 
 
 class RFQUpdate(BaseModel):
-    status: Optional[Literal["draft", "open", "closed", "cancelled"]] = None
+    status: Optional[
+        Literal[
+            "draft",
+            "published",
+            "quotation_open",
+            "quotation_closed",
+            "under_review",
+            "approved",
+            "cancelled",
+            "completed",
+        ]
+    ] = None
     deadline: Optional[datetime] = None
 
 

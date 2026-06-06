@@ -35,6 +35,8 @@ class QuotationItemResponse(QuotationItemBase):
 class QuotationBase(BaseModel):
     status: Literal["draft", "submitted", "selected", "rejected"] = "draft"
     total_amount: Decimal = Field(default=Decimal("0.00"), ge=0)
+    delivery_timeline: Optional[str] = Field(None, max_length=100)
+    notes: Optional[str] = None
 
 
 class QuotationCreate(QuotationBase):
@@ -46,6 +48,8 @@ class QuotationCreate(QuotationBase):
 class QuotationUpdate(BaseModel):
     status: Optional[Literal["draft", "submitted", "selected", "rejected"]] = None
     total_amount: Optional[Decimal] = Field(None, ge=0)
+    delivery_timeline: Optional[str] = Field(None, max_length=100)
+    notes: Optional[str] = None
 
 
 class QuotationResponse(QuotationBase):
