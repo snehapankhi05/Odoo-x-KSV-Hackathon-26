@@ -24,6 +24,7 @@ CREATE TABLE users (
     last_name VARCHAR(100) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     phone_number VARCHAR(30) NOT NULL,
+    CONSTRAINT chk_phone_length CHECK (length(phone_number) >= 10),
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(50) NOT NULL CONSTRAINT chk_user_role CHECK (role IN ('admin', 'officer', 'manager', 'vendor')),
     created_by_id UUID REFERENCES users(user_id) ON DELETE SET NULL, -- Audits manager/vendor creations
@@ -68,6 +69,7 @@ CREATE TABLE rfqs (
     created_by_id UUID NOT NULL REFERENCES users(user_id) ON DELETE RESTRICT, -- Audits creating Officer
     status VARCHAR(50) NOT NULL DEFAULT 'draft' CONSTRAINT chk_rfq_status CHECK (status IN ('draft', 'open', 'closed', 'cancelled')),
     deadline TIMESTAMP WITH TIME ZONE NOT NULL,
+    CONSTRAINT chk_rfq_deadline_future CHECK (deadline > CURRENT_TIMESTAMP),
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP WITH TIME ZONE
@@ -196,6 +198,7 @@ CREATE TABLE invoice_items (
 CREATE TABLE notifications (
     notification_id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    type VARCHAR(50) NOT NULL,
     title VARCHAR(150) NOT NULL,
     message TEXT NOT NULL,
     is_read BOOLEAN NOT NULL DEFAULT FALSE,
