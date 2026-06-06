@@ -18,6 +18,7 @@ from app.api.quotations import router as quotations_router
 from app.api.comparison import router as comparison_router
 from app.api.approvals import router as approvals_router
 from app.api.purchase_orders import router as purchase_orders_router
+from app.api.invoices import router as invoices_router
 from app.core.database import engine
 from app.models import Base
 import app.models
@@ -32,6 +33,8 @@ with engine.connect() as conn:
     conn.execute(text("ALTER TABLE quotations ADD COLUMN IF NOT EXISTS notes TEXT;"))
     conn.execute(text("ALTER TABLE purchase_orders DROP CONSTRAINT IF EXISTS chk_po_status;"))
     conn.execute(text("ALTER TABLE purchase_orders ADD CONSTRAINT chk_po_status CHECK (status IN ('generated', 'sent', 'accepted', 'completed', 'cancelled'));"))
+    conn.execute(text("ALTER TABLE invoices DROP CONSTRAINT IF EXISTS chk_invoice_status;"))
+    conn.execute(text("ALTER TABLE invoices ADD CONSTRAINT chk_invoice_status CHECK (status IN ('draft', 'generated', 'sent', 'paid', 'cancelled', 'pending'));"))
     conn.commit()
 
 # FastAPI App Definition
@@ -69,3 +72,4 @@ app.include_router(quotations_router, prefix="/api/v1/quotations", tags=["Quotat
 app.include_router(comparison_router, prefix="/api/v1/comparison", tags=["Quotation Comparison"])
 app.include_router(approvals_router, prefix="/api/v1/approvals", tags=["Quotation Approval"])
 app.include_router(purchase_orders_router, prefix="/api/v1/purchase-orders", tags=["Purchase Orders"])
+app.include_router(invoices_router, prefix="/api/v1/invoices", tags=["Invoices Management"])

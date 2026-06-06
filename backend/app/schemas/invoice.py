@@ -27,7 +27,7 @@ class InvoiceItemResponse(InvoiceItemBase):
 
 # ── INVOICE SCHEMAS ────────────────────────────────────────────────────
 class InvoiceBase(BaseModel):
-    status: Literal["pending", "paid", "cancelled"] = "pending"
+    status: Literal["draft", "generated", "sent", "paid", "cancelled", "pending"] = "pending"
     amount_due: Decimal = Field(..., ge=0)
     currency: str = Field(default="USD", min_length=3, max_length=3)
     is_locked: bool = False
@@ -41,7 +41,7 @@ class InvoiceCreate(InvoiceBase):
 
 
 class InvoiceUpdate(BaseModel):
-    status: Optional[Literal["pending", "paid", "cancelled"]] = None
+    status: Optional[Literal["draft", "generated", "sent", "paid", "cancelled", "pending"]] = None
     amount_due: Optional[Decimal] = Field(None, ge=0)
     currency: Optional[str] = Field(None, min_length=3, max_length=3)
     is_locked: Optional[bool] = None
@@ -63,3 +63,8 @@ class InvoiceResponse(InvoiceBase):
 class InvoiceListResponse(BaseModel):
     invoices: list[InvoiceResponse]
     total: int
+
+
+class InvoiceCreateRequest(BaseModel):
+    po_id: UUID
+
