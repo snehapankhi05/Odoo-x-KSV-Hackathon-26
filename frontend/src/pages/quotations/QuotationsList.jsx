@@ -1,0 +1,1 @@
+// Bid submissions index page
