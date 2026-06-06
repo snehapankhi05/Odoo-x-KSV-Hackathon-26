@@ -31,3 +31,4 @@ class NotificationResponse(NotificationBase):
 class NotificationListResponse(BaseModel):
     notifications: list[NotificationResponse]
     total: int
+    unread_count: int = 0

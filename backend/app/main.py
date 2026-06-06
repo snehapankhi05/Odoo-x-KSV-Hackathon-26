@@ -19,6 +19,9 @@ from app.api.comparison import router as comparison_router
 from app.api.approvals import router as approvals_router
 from app.api.purchase_orders import router as purchase_orders_router
 from app.api.invoices import router as invoices_router
+from app.api.reports import router as reports_router
+from app.api.notifications import router as notifications_router
+from app.api.activity_logs import router as activity_logs_router
 from app.core.database import engine
 from app.models import Base
 import app.models
@@ -73,3 +76,6 @@ app.include_router(comparison_router, prefix="/api/v1/comparison", tags=["Quotat
 app.include_router(approvals_router, prefix="/api/v1/approvals", tags=["Quotation Approval"])
 app.include_router(purchase_orders_router, prefix="/api/v1/purchase-orders", tags=["Purchase Orders"])
 app.include_router(invoices_router, prefix="/api/v1/invoices", tags=["Invoices Management"])
+app.include_router(reports_router, prefix="/api/v1/reports", tags=["Reports & Analytics"])
+app.include_router(notifications_router, prefix="/api/v1/notifications", tags=["Notifications"])
+app.include_router(activity_logs_router, prefix="/api/v1/activity-logs", tags=["Activity Logs"])
