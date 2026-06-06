@@ -28,7 +28,7 @@ class PurchaseOrderItemResponse(PurchaseOrderItemBase):
 
 # ── PURCHASE ORDER SCHEMAS ─────────────────────────────────────────────
 class PurchaseOrderBase(BaseModel):
-    status: Literal["generated", "completed", "cancelled"] = "generated"
+    status: Literal["generated", "sent", "accepted", "completed", "cancelled"] = "generated"
     total_amount: Decimal = Field(..., ge=0)
     currency: str = Field(default="USD", min_length=3, max_length=3)
     tax_rate: Decimal = Field(default=Decimal("0.00"), ge=0, le=100)
@@ -42,7 +42,7 @@ class PurchaseOrderCreate(PurchaseOrderBase):
 
 
 class PurchaseOrderUpdate(BaseModel):
-    status: Optional[Literal["generated", "completed", "cancelled"]] = None
+    status: Optional[Literal["generated", "sent", "accepted", "completed", "cancelled"]] = None
     total_amount: Optional[Decimal] = Field(None, ge=0)
     currency: Optional[str] = Field(None, min_length=3, max_length=3)
     tax_rate: Optional[Decimal] = Field(None, ge=0, le=100)
@@ -64,3 +64,10 @@ class PurchaseOrderResponse(PurchaseOrderBase):
 class PurchaseOrderListResponse(BaseModel):
     purchase_orders: list[PurchaseOrderResponse]
     total: int
+
+
+class PurchaseOrderCreateRequest(BaseModel):
+    quotation_id: UUID
+    tax_rate: Optional[Decimal] = Field(default=Decimal("0.00"), ge=0, le=100)
+    currency: Optional[str] = Field(default="USD", min_length=3, max_length=3)
+

@@ -53,3 +53,42 @@ class Approval(Base):
         foreign_keys=[manager_id],
         back_populates="managed_approvals",
     )
+
+
+# ── AUTOMATIC APPROVAL INITIATION EVENT LISTENER ───────────────────────
+from sqlalchemy import event
+from sqlalchemy.orm import Session
+
+@event.listens_for(Session, "before_flush")
+def create_pending_approval_on_selection(session, flush_context, instances):
+    from app.models.quotation import Quotation
+    from app.models.approval import Approval
+    from app.models.user import User
+
+    for instance in session.new | session.dirty:
+        if isinstance(instance, Quotation) and instance.status == "selected":
+            # Avoid duplicate pending approvals
+            existing = session.query(Approval).filter(Approval.quotation_id == instance.quotation_id).first()
+            if not existing:
+                # Find any manager to satisfy the NOT NULL constraint on manager_id
+                manager = session.query(User).filter(
+                    User.role == "manager",
+                    User.deleted_at.is_(None)
+                ).first()
+                
+                # If no manager exists, fallback to the first active user
+                if manager:
+                    manager_id = manager.user_id
+                else:
+                    any_user = session.query(User).filter(User.deleted_at.is_(None)).first()
+                    manager_id = any_user.user_id if any_user else None
+
+                if manager_id:
+                    new_approval = Approval(
+                        quotation_id=instance.quotation_id,
+                        manager_id=manager_id,
+                        status="pending",
+                        remarks="Pending manager review"
+                    )
+                    session.add(new_approval)
+
